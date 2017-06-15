@@ -1,30 +1,20 @@
-import { FETCH_CAMPERS, setCampers } from './actions';
+import { API } from './constants';
 import config from './config';
 
-function fetchData(url, callback) {
-  const headers = new Headers();
-
-  headers.append('Content-Type', 'application/json');
-
-  const options = { method: 'GET', headers, };
-
-  fetch(url, options)
-    .then((response) => {
-      if (response.status !== 200) {
-        console.error(`Error fetching campers: ${response.status}`)
-      } else {
-        response.json().then(callback)
-      }
-    })
-    .catch((err) => {
-      console.error(`Error fetching campers: ${JSON.stringify(err)}`)
-    })
-}
-
 export const apiMiddleware = store => next => action => {
-  if (action.type === FETCH_CAMPERS) {
-    fetchData(`${config.API_HOST}/${action.payload}`, data => store.dispatch(setCampers(data)))
+  if (action.type !== API) {
+    return next(action);
   }
 
-  next(action);
+  fetch(`${config.API_HOST}${action.payload.url}`)
+    .then(response => {
+      if (response.status >= 200 && response.status < 400) {
+        return response.json();
+      }
+
+      return Promise.reject('Api error');
+    })
+    .then(response => store.dispatch({ type: action.payload.success, payload: response }))
+    .catch(console.error);
+
 };

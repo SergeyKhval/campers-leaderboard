@@ -12,8 +12,8 @@ import './style.css';
 const store = createStore(rootReducer, [], applyMiddleware(createLogger(), apiMiddleware));
 
 class Campers extends Component {
-  componentWillMount() {
-    this.props.dispatch(fetchCampers('fccusers/top/recent'));
+  componentDidMount() {
+    this.props.dispatch(fetchCampers());
   }
 
   render() {
@@ -33,7 +33,7 @@ class Campers extends Component {
 function mapStateToProps(state) {
   return {
     campers: getCampers(state),
-  }
+  };
 }
 
 const ConnectecCampers = connect(mapStateToProps)(Campers);
@@ -43,7 +43,7 @@ function Main() {
     <Provider store={store}>
       <ConnectecCampers />
     </Provider>
-  )
+  );
 }
 
 render(<Main />, document.getElementById('root'));
