@@ -1,12 +1,12 @@
 import { API } from './constants';
 export const SET_CAMPERS = 'SET_CAMPERS';
 
-export function fetchCampers() {
+export function fetchCampers(url) {
   return {
     type: API,
     payload: {
-      url: 'fccusers/top/recent',
-      success: SET_CAMPERS
+      url,
+      success: SET_CAMPERS,
     },
   };
 }

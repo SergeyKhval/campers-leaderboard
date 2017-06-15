@@ -1,27 +1,30 @@
-import React, { Component } from "react";
-import { render } from "react-dom";
-import { applyMiddleware, createStore } from "redux";
-import { connect, Provider } from "react-redux";
-import { createLogger } from "redux-logger";
-import "normalize.css";
-import rootReducer, { getCampers } from "./reducer";
-import { fetchCampers } from "./actions";
-import { apiMiddleware } from "./middleware";
-import Campers from "./components/Campers";
-import "./style.css";
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { applyMiddleware, createStore, compose } from 'redux';
+import { connect, Provider } from 'react-redux';
+import { createLogger } from 'redux-logger';
+import 'normalize.css';
+import rootReducer, { getCampers } from './reducer';
+import { fetchCampers } from './actions';
+import { apiMiddleware } from './middleware';
+import Campers from './components/Campers';
+import './style.css';
 
 const store = createStore(rootReducer, [], applyMiddleware(createLogger(), apiMiddleware));
 
 class Home extends Component {
   componentDidMount() {
-    this.props.dispatch(fetchCampers());
+    this.props.dispatch(fetchCampers('fccusers/top/recent'));
   }
 
   render() {
     return (
       <div>
         <h1>Campers</h1>
-        <Campers campers={this.props.campers}/>
+        <Campers
+          campers={this.props.campers}
+          fetchCampers={compose(this.props.dispatch, fetchCampers)}
+        />
       </div>
     );
   }
@@ -38,9 +41,9 @@ const Connected = connect(mapStateToProps)(Home);
 function Main() {
   return (
     <Provider store={store}>
-      <Connected/>
+      <Connected />
     </Provider>
   );
 }
 
-render(<Main/>, document.getElementById('root'));
+render(<Main />, document.getElementById('root'));
